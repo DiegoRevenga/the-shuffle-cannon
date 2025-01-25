@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "the_shuffle_wand:item/shuffle_wand"
+  }
+}

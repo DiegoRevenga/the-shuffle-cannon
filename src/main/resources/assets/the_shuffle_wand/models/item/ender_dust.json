@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "the_shuffle_wand:item/ender_dust"
+  }
+}
