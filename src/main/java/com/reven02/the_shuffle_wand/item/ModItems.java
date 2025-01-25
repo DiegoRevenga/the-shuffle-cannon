@@ -6,26 +6,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public class ModItems {
 
-    public static final RegistryKey<Item> SHUFFLE_WAND_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TheShuffleWand.MOD_ID, "shuffle_wand"));
-    public static final Item SHUFFLE_WAND = register(
-            new Item(new Item.Settings().maxCount(1)),
-            SHUFFLE_WAND_KEY
-    );
+    public static final Item SHUFFLE_WAND = register("shuffle_wand", new Item(new Item.Settings().maxCount(1)));
+    public static final Item ENDER_DUST = register("ender_dust", new Item(new Item.Settings()));
 
-    public static final RegistryKey<Item> ENDER_DUST_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TheShuffleWand.MOD_ID, "ender_dust"));
-    public static final Item ENDER_DUST = register(
-            new Item(new Item.Settings()),
-            ENDER_DUST_KEY
-    );
-
-    private static Item register(Item item, RegistryKey<Item> registryKey) {
-        return Registry.register(Registries.ITEM, registryKey.getValue(), item);
+    private static Item register(String name, Item item) {
+        return Registry.register(Registries.ITEM, Identifier.of(TheShuffleWand.MOD_ID, name), item);
     }
 
     public static void initialize() {
