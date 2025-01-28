@@ -1,4 +1,6 @@
 {
   "item.the_shuffle_wand.shuffle_wand": "Shuffle Wand",
+  "item.the_shuffle_wand.shuffle_wand.content": "%s: %d",
+
   "item.the_shuffle_wand.ender_dust": "Ender dust"
 }

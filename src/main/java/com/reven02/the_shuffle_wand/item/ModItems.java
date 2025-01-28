@@ -11,12 +11,12 @@ import net.minecraft.util.Identifier;
 
 public class ModItems {
 
-    public static final Item SHUFFLE_WAND = register("shuffle_wand", new ShuffleWandItem());
-    public static final Item ENDER_DUST = register("ender_dust", new Item(new Item.Settings()));
+    public static final Item SHUFFLE_WAND = register(ShuffleWandItem.ID, new ShuffleWandItem());
+    public static final Item ENDER_DUST = register(Identifier.of(TheShuffleWand.MOD_ID, "ender_dust"), new Item(new Item.Settings()));
 
 
-    private static Item register(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(TheShuffleWand.MOD_ID, name), item);
+    private static Item register(Identifier identifier, Item item) {
+        return Registry.register(Registries.ITEM, identifier, item);
     }
 
     public static void initialize() {
