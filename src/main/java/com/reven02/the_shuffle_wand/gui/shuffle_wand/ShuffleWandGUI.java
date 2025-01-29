@@ -21,13 +21,14 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
     static final int SIZE = 9;
 
-    Inventory wandInventory;
+    SimpleInventory wandInventory;
 
     public ShuffleWandGUI(int syncId, PlayerInventory playerInventory, StackReference owner) {
         super(SCREEN_HANDLER_TYPE, syncId, playerInventory, owner);
 
         this.wandInventory = new ShuffleWandInventory(SIZE);
         this.populateInventory();
+        this.wandInventory.addListener(this::saveInventory);
 
         WGridPanel root = new WGridPanel();
         setRootPanel(root);
@@ -37,8 +38,6 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
         // Avoid duplicates
         itemSlot.setInputFilter(this::filter);
-        // Listener to save inventory in the data component
-        itemSlot.addChangeListener(this::changeListener);
 
         root.add(itemSlot, 0, 1);
         root.add(this.createPlayerInventoryPanel(), 0, 3);
@@ -57,35 +56,17 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
                 this.wandInventory.setStack(i, item.getDefaultStack());
             }
         }
-        this.wandInventory.markDirty();
     }
 
-    /**
-     * Handles a changed item stack in an item slot.
-     *
-     * @param slot      the item slot widget
-     * @param inventory the item inventory of the slot
-     * @param index     the index of the slot in the inventory
-     * @param stack     the changed item stack
-     */
-    private void changeListener(WItemSlot slot, Inventory inventory, int index, ItemStack stack) {
+    private void saveInventory(Inventory inventory) {
         ItemStack wandItemStack = this.owner.get();
 
-        ShuffleWandDataComponent data = wandItemStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
-        if (data == null) {
+        ShuffleWandDataComponent oldData = wandItemStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
+        if (oldData == null) {
             return;
         }
 
-        // Putting in an item
-        if (!stack.isEmpty() && this.filter(stack)) {
-            ShuffleWandDataComponent newData = ShuffleWandDataComponent.add(data, stack.getItem(), 1);
-            wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, newData);
-        }
-
-        // Taking out an item
-        if (stack.isEmpty()) {
-            // TODO Taking out an item
-        }
+        wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.of(inventory, oldData));
     }
 
     private boolean filter(ItemStack stack) {
