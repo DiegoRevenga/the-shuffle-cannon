@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
 
@@ -89,9 +90,9 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
         ShuffleWandDataComponent data = stack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
 
         if (data != null) {
-            for (Pair<Item, Integer> pair : data.wandContent()) {
-                Item item = pair.getFirst();
-                Integer ratio = pair.getSecond();
+            for (Map.Entry<Item, Integer> entry : data.wandContent().entrySet()) {
+                Item item = entry.getKey();
+                Integer ratio = entry.getValue();
 
                 tooltip.add(Text.translatable("item.the_shuffle_wand.shuffle_wand.content", item.getName(), ratio));
             }

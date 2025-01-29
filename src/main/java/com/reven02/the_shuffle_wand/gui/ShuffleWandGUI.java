@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.reven02.the_shuffle_wand.gui.ModGUIs.SCREEN_HANDLER_TYPE;
 
@@ -45,29 +46,18 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         root.validate(this);
     }
 
-    @Override
-    public boolean canUse(PlayerEntity entity) {
-        ItemStack left = ownerStack;
-        ItemStack right = owner.get();
-
-        // Just checks count and item
-        if (left == right) {
-            return true;
-        } else {
-            return left.getCount() == right.getCount() && left.isOf(right.getItem());
-        }
-    }
-
     private void populateInventory() {
         ShuffleWandDataComponent data = this.ownerStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
         if (data != null) {
-            for (int i = 0; i < data.wandContent().size(); i++) {
+            int i = 0;
+            for (Map.Entry<Item, Integer> entry : data.wandContent().entrySet()) {
                 if (i >= SIZE) { break; }
 
-                Item item = data.wandContent().get(i).getFirst();
-                Integer ratio = data.wandContent().get(i).getSecond();
+                Item item = entry.getKey();
+                Integer ratio = entry.getValue();
 
                 this.wandInventory.setStack(i, item.getDefaultStack());
+                i++;
             }
         }
     }
@@ -94,6 +84,19 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
             itemStacks.add(stack);
 
             wandItemStack.set(DataComponentTypes.BUNDLE_CONTENTS,  new BundleContentsComponent(itemStacks));
+        }
+    }
+
+    @Override
+    public boolean canUse(PlayerEntity entity) {
+        ItemStack left = ownerStack;
+        ItemStack right = owner.get();
+
+        // Just checks count and item
+        if (left == right) {
+            return true;
+        } else {
+            return left.getCount() == right.getCount() && left.isOf(right.getItem());
         }
     }
 }
