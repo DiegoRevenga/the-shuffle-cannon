@@ -1,12 +1,13 @@
 package com.reven02.the_shuffle_wand.item.custom;
 
+import com.mojang.datafixers.util.Pair;
 import com.reven02.the_shuffle_wand.TheShuffleWand;
+import com.reven02.the_shuffle_wand.component.ModComponents;
+import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
 import com.reven02.the_shuffle_wand.gui.ShuffleWandGUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,7 +26,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.annotation.Debug;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
     public ShuffleWandItem() {
         super(new Item.Settings()
                 .maxCount(1)
-                .component(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT)
+                .component(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.DEFAULT)
         );
     }
 
@@ -86,11 +86,14 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
 
-        BundleContentsComponent contents = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        ShuffleWandDataComponent data = stack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
 
-        if (contents != null) {
-            for (ItemStack itemStack : contents.iterate()) {
-                tooltip.add(Text.translatable("item.the_shuffle_wand.shuffle_wand.content", itemStack.getItem().getName(), itemStack.getCount()));
+        if (data != null) {
+            for (Pair<Item, Integer> pair : data.wandContent()) {
+                Item item = pair.getFirst();
+                Integer ratio = pair.getSecond();
+
+                tooltip.add(Text.translatable("item.the_shuffle_wand.shuffle_wand.content", item.getName(), ratio));
             }
         }
     }
@@ -98,7 +101,7 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
     @Override
     public ItemStack getDefaultStack() {
         ItemStack stack = new ItemStack(this);
-        stack.set(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT);
+        stack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.DEFAULT);
 
         return stack;
     }

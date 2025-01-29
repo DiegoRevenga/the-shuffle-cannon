@@ -1,0 +1,1 @@
+/give @p the_shuffle_wand:shuffle_wand[the_shuffle_wand:shuffle_wand_data_component={wand_content:[{item:diamond,ratio:1}]}]
