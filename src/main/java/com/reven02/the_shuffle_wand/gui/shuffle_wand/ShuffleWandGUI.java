@@ -3,9 +3,8 @@ package com.reven02.the_shuffle_wand.gui.shuffle_wand;
 import com.reven02.the_shuffle_wand.component.ModComponents;
 import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.WGridPanel;
-import io.github.cottonmc.cotton.gui.widget.WItemSlot;
-import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import io.github.cottonmc.cotton.gui.widget.*;
+import io.github.cottonmc.cotton.gui.widget.data.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -30,17 +29,29 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         this.populateInventory();
         this.wandInventory.addListener(this::saveInventory);
 
+        // Root panel
         WGridPanel root = new WGridPanel();
         setRootPanel(root);
-        root.setInsets(Insets.ROOT_PANEL);
+        root.setInsets(new Insets(0, 7, 7, 7));
 
+        // Item slots
         WItemSlot itemSlot = WItemSlot.of(wandInventory, 0, SIZE, 1);
-
-        // Avoid duplicates
-        itemSlot.setInputFilter(this::filter);
-
+        itemSlot.setInputFilter(this::filter);  // Avoid duplicates
         root.add(itemSlot, 0, 1);
-        root.add(this.createPlayerInventoryPanel(), 0, 3);
+
+        // Ratio sliders and displays
+        for (int i = 0; i < SIZE; i++) {
+            WSlider slider = new WSlider(1, 10, Axis.VERTICAL);
+            root.add(slider, i, 2, 1, 2);
+
+            WDynamicLabel label = new WDynamicLabel(() -> Integer.toString(slider.getValue()));
+            label.setAlignment(HorizontalAlignment.CENTER);
+            label.setVerticalAlignment(VerticalAlignment.CENTER);
+            root.add(label, i, 4);
+        }
+
+        root.add(this.createPlayerInventoryPanel(), 0, 5);
+
         root.validate(this);
     }
 
