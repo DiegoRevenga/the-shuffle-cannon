@@ -41,8 +41,8 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
         // Avoid duplicates
         itemSlot.setInputFilter(this::filter);
-
-//        itemSlot.addChangeListener(this::changeListener);
+        // Listener to save inventory in the data component
+        itemSlot.addChangeListener(this::changeListener);
 
         root.add(itemSlot, 0, 1);
         root.add(this.createPlayerInventoryPanel(), 0, 3);
@@ -52,15 +52,13 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
     private void populateInventory() {
         ShuffleWandDataComponent data = this.ownerStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
         if (data != null) {
-            int i = 0;
-            for (Map.Entry<Item, Integer> entry : data.wandContent().entrySet()) {
+            for (int i = 0; i < data.wandContent().size(); i++) {
                 if (i >= SIZE) { break; }
 
-                Item item = entry.getKey();
-                Integer ratio = entry.getValue();
+                Item item = data.wandContent().get(i).getFirst();
+                Integer ratio = data.wandContent().get(i).getSecond();
 
                 this.wandInventory.setStack(i, item.getDefaultStack());
-                i++;
             }
         }
     }
@@ -76,17 +74,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
     private void changeListener(WItemSlot slot, Inventory inventory, int index, ItemStack stack) {
         ItemStack wandItemStack = this.owner.get();
 
-        BundleContentsComponent content = wandItemStack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        if (content == null) {
+        ShuffleWandDataComponent data = wandItemStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
+        if (data == null) {
             return;
         }
 
         // Adding an item
-        if (!stack.isEmpty()) {
-            List<ItemStack> itemStacks = new ArrayList<>(content.stream().toList());
-            itemStacks.add(stack);
-
-            wandItemStack.set(DataComponentTypes.BUNDLE_CONTENTS,  new BundleContentsComponent(itemStacks));
+        if (!stack.isEmpty() && this.filter(stack)) {
+            ShuffleWandDataComponent newData = ShuffleWandDataComponent.add(data, stack.getItem(), 1);
+            wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, newData);
         }
     }
 
@@ -95,8 +91,11 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         if (data == null) {
             return false;
         }
+
         // TODO Only allow blocks
-        return !data.wandContent().containsKey(stack.getItem());
+        boolean duplicated = data.wandContent().stream().anyMatch(pair -> stack.isOf(pair.getFirst()));
+
+        return !duplicated;
     }
 
     @Override

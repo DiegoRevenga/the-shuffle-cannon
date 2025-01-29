@@ -90,9 +90,9 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
         ShuffleWandDataComponent data = stack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
 
         if (data != null) {
-            for (Map.Entry<Item, Integer> entry : data.wandContent().entrySet()) {
-                Item item = entry.getKey();
-                Integer ratio = entry.getValue();
+            for (Pair<Item, Integer> pair : data.wandContent()) {
+                Item item = pair.getFirst();
+                Integer ratio = pair.getSecond();
 
                 tooltip.add(Text.translatable("item.the_shuffle_wand.shuffle_wand.content", item.getName(), ratio));
             }
