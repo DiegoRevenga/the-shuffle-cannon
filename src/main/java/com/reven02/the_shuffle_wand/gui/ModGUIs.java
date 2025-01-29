@@ -1,6 +1,8 @@
 package com.reven02.the_shuffle_wand.gui;
 
 import com.reven02.the_shuffle_wand.TheShuffleWand;
+import com.reven02.the_shuffle_wand.gui.shuffle_wand.ShuffleWandGUI;
+import com.reven02.the_shuffle_wand.gui.shuffle_wand.ShuffleWandScreen;
 import com.reven02.the_shuffle_wand.item.custom.ShuffleWandItem;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.entity.player.PlayerInventory;

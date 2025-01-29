@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.reven02.the_shuffle_wand.TheShuffleWand;
 import com.reven02.the_shuffle_wand.component.ModComponents;
 import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
-import com.reven02.the_shuffle_wand.gui.ShuffleWandGUI;
+import com.reven02.the_shuffle_wand.gui.shuffle_wand.ShuffleWandGUI;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
@@ -31,7 +31,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
 
@@ -109,7 +108,7 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
 
     @Override
     public Text getDisplayName() {
-        return Text.translatable("item.the_shuffle_wand.shuffle_wand.content");
+        return Text.translatable("item.the_shuffle_wand.shuffle_wand");
     }
 
     @Override

@@ -1,13 +1,11 @@
-package com.reven02.the_shuffle_wand.gui;
+package com.reven02.the_shuffle_wand.gui.shuffle_wand;
 
 import com.reven02.the_shuffle_wand.component.ModComponents;
 import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
-import com.reven02.the_shuffle_wand.item.ModItems;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -23,11 +21,12 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
     static final int SIZE = 9;
 
-    Inventory wandInventory = new SimpleInventory(SIZE);
+    Inventory wandInventory;
 
     public ShuffleWandGUI(int syncId, PlayerInventory playerInventory, StackReference owner) {
         super(SCREEN_HANDLER_TYPE, syncId, playerInventory, owner);
 
+        this.wandInventory = new ShuffleWandInventory(SIZE);
         this.populateInventory();
 
         WGridPanel root = new WGridPanel();
@@ -58,6 +57,7 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
                 this.wandInventory.setStack(i, item.getDefaultStack());
             }
         }
+        this.wandInventory.markDirty();
     }
 
     /**

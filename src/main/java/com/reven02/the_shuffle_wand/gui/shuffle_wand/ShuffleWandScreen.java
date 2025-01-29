@@ -1,4 +1,4 @@
-package com.reven02.the_shuffle_wand.gui;
+package com.reven02.the_shuffle_wand.gui.shuffle_wand;
 
 import io.github.cottonmc.cotton.gui.client.CottonInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
