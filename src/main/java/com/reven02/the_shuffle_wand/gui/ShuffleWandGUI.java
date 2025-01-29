@@ -7,11 +7,13 @@ import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -74,10 +76,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
             return;
         }
 
-        // Adding an item
+        // Putting in an item
         if (!stack.isEmpty() && this.filter(stack)) {
             ShuffleWandDataComponent newData = ShuffleWandDataComponent.add(data, stack.getItem(), 1);
             wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, newData);
+        }
+
+        // Taking out an item
+        if (stack.isEmpty()) {
+            // TODO Taking out an item
         }
     }
 
@@ -87,11 +94,13 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
             return false;
         }
 
-        boolean isShuffleWand = stack.isOf(ModItems.SHUFFLE_WAND);
-        // TODO Only allow blocks
-        boolean duplicated = data.wandContent().stream().anyMatch(pair -> stack.isOf(pair.getFirst()));
+        boolean isBlock = stack.getItem() instanceof BlockItem;
+        if (!isBlock) {
+            return false;
+        }
 
-        return !isShuffleWand && !duplicated;
+        boolean duplicated = data.wandContent().stream().anyMatch(pair -> stack.isOf(pair.getFirst()));
+        return !duplicated;
     }
 
     @Override
