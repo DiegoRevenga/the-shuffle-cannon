@@ -1,5 +1,7 @@
 package com.reven02.the_shuffle_wand.gui;
 
+import com.reven02.the_shuffle_wand.component.ModComponents;
+import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
@@ -11,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -34,7 +37,7 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         root.setInsets(Insets.ROOT_PANEL);
 
         WItemSlot itemSlot = WItemSlot.of(wandInventory, 0, SIZE, 1);
-        itemSlot.addChangeListener(this::changeListener);
+//        itemSlot.addChangeListener(this::changeListener);
         root.add(itemSlot, 0, 1);
 
         root.add(this.createPlayerInventoryPanel(), 0, 3);
@@ -56,14 +59,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
     }
 
     private void populateInventory() {
-        // TODO Use custom data component instead of BUNDLE_CONTENTS
-        BundleContentsComponent content = this.ownerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        if (content != null) {
-            int i = 0;
-            for (ItemStack itemStack : content.iterate()) {
+        ShuffleWandDataComponent data = this.ownerStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
+        if (data != null) {
+            for (int i = 0; i < data.wandContent().size(); i++) {
                 if (i >= SIZE) { break; }
-                this.wandInventory.setStack(i, itemStack);
-                i++;
+
+                Item item = data.wandContent().get(i).getFirst();
+                Integer ratio = data.wandContent().get(i).getSecond();
+
+                this.wandInventory.setStack(i, item.getDefaultStack());
             }
         }
     }
