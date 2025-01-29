@@ -2,12 +2,11 @@ package com.reven02.the_shuffle_wand.gui;
 
 import com.reven02.the_shuffle_wand.component.ModComponents;
 import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
+import com.reven02.the_shuffle_wand.item.ModItems;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -15,10 +14,6 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import static com.reven02.the_shuffle_wand.gui.ModGUIs.SCREEN_HANDLER_TYPE;
 
@@ -92,10 +87,11 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
             return false;
         }
 
+        boolean isShuffleWand = stack.isOf(ModItems.SHUFFLE_WAND);
         // TODO Only allow blocks
         boolean duplicated = data.wandContent().stream().anyMatch(pair -> stack.isOf(pair.getFirst()));
 
-        return !duplicated;
+        return !isShuffleWand && !duplicated;
     }
 
     @Override
