@@ -38,11 +38,14 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         root.setInsets(Insets.ROOT_PANEL);
 
         WItemSlot itemSlot = WItemSlot.of(wandInventory, 0, SIZE, 1);
+
+        // Avoid duplicates
+        itemSlot.setInputFilter(this::filter);
+
 //        itemSlot.addChangeListener(this::changeListener);
+
         root.add(itemSlot, 0, 1);
-
         root.add(this.createPlayerInventoryPanel(), 0, 3);
-
         root.validate(this);
     }
 
@@ -85,6 +88,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
             wandItemStack.set(DataComponentTypes.BUNDLE_CONTENTS,  new BundleContentsComponent(itemStacks));
         }
+    }
+
+    private boolean filter(ItemStack stack) {
+        ShuffleWandDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
+        if (data == null) {
+            return false;
+        }
+        // TODO Only allow blocks
+        return !data.wandContent().containsKey(stack.getItem());
     }
 
     @Override
