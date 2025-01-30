@@ -5,6 +5,7 @@ import com.reven02.the_shuffle_wand.TheShuffleWand;
 import com.reven02.the_shuffle_wand.component.ModComponents;
 import com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent.ShuffleWandDataComponent;
 import com.reven02.the_shuffle_wand.gui.shuffle_wand.ShuffleWandGUI;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
@@ -20,6 +21,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -32,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
+public class ShuffleWandItem extends Item {
 
     public static final Identifier ID = Identifier.of(TheShuffleWand.MOD_ID, "shuffle_wand");
 
@@ -45,9 +47,34 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.openHandledScreen(new SimpleNamedScreenHandlerFactory(this, this.getDisplayName()));
-
+        //user.openHandledScreen(new SimpleNamedScreenHandlerFactory(this, this.getDisplayName()));
+        user.openHandledScreen(createScreenHandlerFactory(user, hand));
         return TypedActionResult.success(user.getMainHandStack());
+    }
+
+    private NamedScreenHandlerFactory createScreenHandlerFactory(PlayerEntity player, Hand hand) {
+        EquipmentSlot slot = switch (hand) {
+            case MAIN_HAND -> EquipmentSlot.MAINHAND;
+            case OFF_HAND -> EquipmentSlot.OFFHAND;
+        };
+        ItemStack wandStack = player.getEquippedStack(slot);
+
+        return new ExtendedScreenHandlerFactory<ItemStack>() {
+            @Override
+            public Text getDisplayName() {
+                return Text.translatable("item.the_shuffle_wand.shuffle_wand");
+            }
+
+            @Override
+            public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+                return new ShuffleWandGUI(syncId, playerInventory, StackReference.of(player, slot));
+            }
+
+            @Override
+            public ItemStack getScreenOpeningData(ServerPlayerEntity player) {
+                return wandStack;
+            }
+        };
     }
 
     @Override
@@ -104,15 +131,5 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
         stack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.DEFAULT);
 
         return stack;
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return Text.translatable("item.the_shuffle_wand.shuffle_wand");
-    }
-
-    @Override
-    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new ShuffleWandGUI(syncId, playerInventory, StackReference.of(player, EquipmentSlot.MAINHAND));
     }
 }
