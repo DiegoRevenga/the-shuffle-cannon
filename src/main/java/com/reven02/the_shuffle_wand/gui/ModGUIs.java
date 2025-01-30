@@ -25,7 +25,7 @@ public class ModGUIs {
         TheShuffleWand.log("Registering mod GUIs");
 
         SHUFFLE_WAND_SCREEN_HANDLER_TYPE = new ExtendedScreenHandlerType<ShuffleWandGUI, ItemStack>((syncId, playerInventory, wandStack) -> {
-            StackReference wandReference = StackReference.of(() -> wandStack, stack -> { return; });
+            StackReference wandReference = StackReference.of(() -> wandStack, stack -> {});
             return new ShuffleWandGUI(syncId, playerInventory, wandReference);
         }, PacketCodecs.codec(ItemStack.CODEC).cast());
 
