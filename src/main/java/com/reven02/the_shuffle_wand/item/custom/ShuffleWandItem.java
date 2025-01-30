@@ -115,6 +115,4 @@ public class ShuffleWandItem extends Item implements NamedScreenHandlerFactory {
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         return new ShuffleWandGUI(syncId, playerInventory, StackReference.of(player, EquipmentSlot.MAINHAND));
     }
-
-
 }
