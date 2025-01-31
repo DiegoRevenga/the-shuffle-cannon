@@ -1,5 +1,6 @@
 package com.reven02.the_shuffle_wand.gui.shuffle_wand;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.reven02.the_shuffle_wand.TheShuffleWand;
 import com.reven02.the_shuffle_wand.component.ModComponents;
@@ -11,7 +12,6 @@ import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.BlockItem;
@@ -19,6 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.IntConsumer;
 
 import static com.reven02.the_shuffle_wand.gui.ModGUIs.SHUFFLE_WAND_SCREEN_HANDLER_TYPE;
@@ -28,14 +30,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
     static final int SIZE = 9;
     private static final RuntimeException WAND_MISSING_ERROR = new IllegalStateException("Wand StackReference is missing");
 
-    SimpleInventory wandInventory;
+    private final SimpleInventory wandInventory;
+    private final List<WSlider> sliders = new ArrayList<>();
 
     public ShuffleWandGUI(int syncId, PlayerInventory playerInventory, StackReference owner) {
         super(SHUFFLE_WAND_SCREEN_HANDLER_TYPE, syncId, playerInventory, owner);
 
         this.wandInventory = new ShuffleWandInventory(SIZE);
         this.populateInventory();
-        this.wandInventory.addListener(this::saveInventory);
+        this.wandInventory.addListener(inv -> this.saveInfo());
 
         // Root panel
         WGridPanel root = new WGridPanel();
@@ -44,14 +47,15 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
 
         // Item slots
         WItemSlot itemSlot = WItemSlot.of(wandInventory, 0, SIZE, 1);
-        itemSlot.setInputFilter(this::filter);  // Avoid duplicates
+        itemSlot.setInputFilter(this::slotFilter);  // Avoid duplicates
         root.add(itemSlot, 0, 1);
 
         // Ratio sliders and displays
         for (int i = 0; i < SIZE; i++) {
             WSlider slider = new WSlider(1, 10, Axis.VERTICAL);
+            this.sliders.add(slider);
             slider.setValue(this.getRatio(i));
-            slider.setDraggingFinishedListener(saveRatio(i));
+            slider.setDraggingFinishedListener(sliderListener(i));
 
             root.add(slider, i, 2, 1, 2);
 
@@ -66,65 +70,53 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         root.validate(this);
     }
 
-    private void populateInventory() {
-        ShuffleWandDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
-        if (data != null) {
-            for (int i = 0; i < data.wandContent().size(); i++) {
-                if (i >= SIZE) { break; }
+    private void saveInfo() {
+        List<Pair<Item, Integer>> newContent = new ArrayList<>(SIZE);
 
-                Item item = data.wandContent().get(i).getFirst();
-                Integer ratio = data.wandContent().get(i).getSecond();
+        for (int i = 0; i < this.wandInventory.size(); i++) {
+            ItemStack itemStack = this.wandInventory.getStack(i);
+            WSlider slider = this.sliders.get(i);
 
-                this.wandInventory.setStack(i, item.getDefaultStack());
-            }
+            newContent.add(Pair.of(itemStack.getItem(), slider.getValue()));
         }
+
+        this.owner.get().set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, new ShuffleWandDataComponent(newContent));
     }
 
-    private void saveInventory(Inventory inventory) {
-        ItemStack wandItemStack = this.owner.get();
+    private void populateInventory() {
+        ShuffleWandDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
+        if (data == null) throw WAND_MISSING_ERROR;
 
-        ShuffleWandDataComponent oldData = wandItemStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
-        if (oldData == null) {
-            return;
+        for (int i = 0; i < SIZE; i++) {
+            Item item = data.wandContent().get(i).getFirst();
+
+            this.wandInventory.setStack(i, item.getDefaultStack());
         }
-
-        wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.fromNewInventory(inventory, oldData));
-        // TODO Shift inventory to leave no gaps between items
     }
 
     private int getRatio(int index) {
         final ShuffleWandDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
-        if (data == null || index >= data.wandContent().size()) {
-            return 1;
-        }
+        if (data == null) throw WAND_MISSING_ERROR;
+
         return (data.wandContent().get(index).getSecond());
     }
 
-    private IntConsumer saveRatio(int index) {
-        // FIXME Random movement of other sliders
-        
+    private IntConsumer sliderListener(int index) {
         Identifier MSG_ID = Identifier.of(TheShuffleWand.MOD_ID, String.format("slider_%d", index));
 
         // Receive: [Server] <- Client
         ScreenNetworking.of(this, NetworkSide.SERVER).receive(MSG_ID, Codec.INT, newRatio -> {
-            ItemStack wandItemStack = this.owner.get();
-            ShuffleWandDataComponent oldData = wandItemStack.get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
-            if (oldData == null) {
-                throw WAND_MISSING_ERROR;
-            }
-
-            if (index < oldData.wandContent().size()) {  // Only save sliders with item on top
-                wandItemStack.set(ModComponents.SHUFFLE_WAND_DATA_COMPONENT, ShuffleWandDataComponent.fromNewRatio(newRatio, index, oldData));
-            }
+            this.sliders.get(index).setValue(newRatio);
+            saveInfo();
         });
 
+        // Send: [Client] -> Server
         return value -> {
-            // Send: [Client] -> Server
             ScreenNetworking.of(this, NetworkSide.CLIENT).send(MSG_ID, Codec.INT, value);
         };
     }
 
-    private boolean filter(ItemStack stack) {
+    private boolean slotFilter(ItemStack stack) {
         ShuffleWandDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_WAND_DATA_COMPONENT);
         if (data == null) {
             return false;

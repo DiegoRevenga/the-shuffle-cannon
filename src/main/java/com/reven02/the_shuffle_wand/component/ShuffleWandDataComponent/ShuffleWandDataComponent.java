@@ -10,44 +10,14 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public record ShuffleWandDataComponent(List<Pair<Item, Integer>> wandContent) {
 
-    public static final ShuffleWandDataComponent DEFAULT = new ShuffleWandDataComponent(List.of());
+    private static final List<Pair<Item, Integer>> EMPTY_CONTENT = Collections.nCopies(9, Pair.of(Items.AIR, 1));
 
-    public static ShuffleWandDataComponent fromNewInventory(Inventory inventory, ShuffleWandDataComponent oldData) {
-        List<Pair<Item, Integer>> oldContent = oldData.wandContent();
-        List<Pair<Item, Integer>> newContent = new ArrayList<>();
-
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack itemStack = inventory.getStack(i);
-            if (itemStack.isOf(Items.AIR)) { continue; }
-
-            Pair<Item, Integer> oldItem = oldContent.stream()
-                    .filter(pair -> itemStack.isOf(pair.getFirst()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (oldItem != null) {  // Item was already in the wand
-                newContent.add(oldItem);
-            }
-            else {  // Item is new -> Insert with default ratio = 1
-                newContent.add(Pair.of(itemStack.getItem(), 1));
-            }
-        }
-
-        return new ShuffleWandDataComponent(newContent);
-    }
-
-    public static ShuffleWandDataComponent fromNewRatio(int newRatio, int index, ShuffleWandDataComponent oldData) {
-        List<Pair<Item, Integer>> newContent = new ArrayList<>(oldData.wandContent());
-
-        Pair<Item, Integer> newPair = Pair.of(newContent.get(index).getFirst(), newRatio);
-        newContent.set(index, newPair);
-
-        return new ShuffleWandDataComponent(newContent);
-    }
+    public static final ShuffleWandDataComponent DEFAULT = new ShuffleWandDataComponent(EMPTY_CONTENT);
 
     static Codec<Item> itemCodec = Registries.ITEM.getCodec().fieldOf("item").codec();
     static Codec<Integer> ratioCodec = Codec.INT.fieldOf("ratio").codec();
