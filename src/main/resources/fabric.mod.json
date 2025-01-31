@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "the_shuffle_wand",
+	"id": "the_shuffle_cannon",
 	"version": "${version}",
-	"name": "The Shuffle Wand",
+	"name": "The Shuffle Cannon",
 	"description": "Random block building made easy!",
 	"authors": [
 		"Reven02"
@@ -12,21 +12,21 @@
 		"sources": "https://github.com/DiegoRevenga/the-shuffle-wand"
 	},
 	"license": "MIT",
-	"icon": "assets/the_shuffle_wand/icon.png",
+	"icon": "assets/the_shuffle_cannon/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.reven02.the_shuffle_wand.TheShuffleWand"
+			"com.reven02.the_shuffle_cannon.TheShuffleCannon"
 		],
 		"fabric-datagen": [
-			"com.reven02.the_shuffle_wand.TheShuffleWandDataGenerator"
+			"com.reven02.the_shuffle_cannon.TheShuffleCannonDataGenerator"
 		],
 		"client": [
-			"com.reven02.the_shuffle_wand.TheShuffleWandClient"
+			"com.reven02.the_shuffle_cannon.TheShuffleCannonClient"
 		]
 	},
 	"mixins": [
-		"the_shuffle_wand.mixins.json"
+      "the_shuffle_cannon.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.10",

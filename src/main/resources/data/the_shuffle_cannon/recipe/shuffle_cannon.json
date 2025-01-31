@@ -1,0 +1,27 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "pattern": [
+        " ec",
+        "rde",
+        "cr "
+    ],
+    "key": {
+        "c": {
+            "item": "minecraft:copper_ingot"
+        },
+        "e": {
+            "item": "the_shuffle_cannon:ender_dust"
+        },
+        "d": {
+            "item": "minecraft:dispenser"
+        },
+        "r": {
+            "item": "minecraft:repeater"
+        }
+    },
+    "result": {
+        "id": "the_shuffle_cannon:shuffle_cannon",
+        "count": 1
+    }
+}
