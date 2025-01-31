@@ -111,9 +111,7 @@ public class ShuffleWandGUI extends ItemSyncedGuiDescription {
         });
 
         // Send: [Client] -> Server
-        return value -> {
-            ScreenNetworking.of(this, NetworkSide.CLIENT).send(MSG_ID, Codec.INT, value);
-        };
+        return value -> ScreenNetworking.of(this, NetworkSide.CLIENT).send(MSG_ID, Codec.INT, value);
     }
 
     private boolean slotFilter(ItemStack stack) {

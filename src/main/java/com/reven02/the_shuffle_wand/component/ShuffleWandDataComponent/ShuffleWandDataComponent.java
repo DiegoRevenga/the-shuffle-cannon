@@ -3,13 +3,10 @@ package com.reven02.the_shuffle_wand.component.ShuffleWandDataComponent;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
