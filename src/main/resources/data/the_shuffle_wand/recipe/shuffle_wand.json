@@ -2,19 +2,22 @@
     "type": "minecraft:crafting_shaped",
     "category": "equipment",
     "pattern": [
-        " AE",
-        " BA",
-        "A  "
+        " ec",
+        "rde",
+        "cr "
     ],
     "key": {
-        "A": {
-            "item": "minecraft:amethyst_shard"
+        "c": {
+            "item": "minecraft:copper_ingot"
         },
-        "E": {
-            "item": "minecraft:ender_pearl"
+        "e": {
+            "item": "the_shuffle_wand:ender_dust"
         },
-        "B": {
-            "item": "minecraft:breeze_rod"
+        "d": {
+            "item": "minecraft:dispenser"
+        },
+        "r": {
+            "item": "minecraft:repeater"
         }
     },
     "result": {
