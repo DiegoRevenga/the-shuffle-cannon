@@ -2,16 +2,13 @@
     "type": "minecraft:crafting_shaped",
     "category": "equipment",
     "pattern": [
-        " ec",
-        "rde",
-        "cr "
+        " rc",
+        "cdr",
+        "cc "
     ],
     "key": {
         "c": {
             "item": "minecraft:copper_ingot"
-        },
-        "e": {
-            "item": "the_shuffle_cannon:ender_dust"
         },
         "d": {
             "item": "minecraft:dispenser"

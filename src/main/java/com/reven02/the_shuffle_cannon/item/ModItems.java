@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class ModItems {
 
     public static final Item SHUFFLE_CANNON = register(ShuffleCannonItem.ID, new ShuffleCannonItem());
-    public static final Item ENDER_DUST = register(Identifier.of(TheShuffleCannon.MOD_ID, "ender_dust"), new Item(new Item.Settings()));
+//    public static final Item ENDER_DUST = register(Identifier.of(TheShuffleCannon.MOD_ID, "ender_dust"), new Item(new Item.Settings()));
 
 
     private static Item register(Identifier identifier, Item item) {
@@ -26,8 +26,8 @@ public class ModItems {
             entries.add(SHUFFLE_CANNON);
         });
 
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
-            entries.add(ENDER_DUST);
-        });
+//        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
+//            entries.add(ENDER_DUST);
+//        });
     }
 }
