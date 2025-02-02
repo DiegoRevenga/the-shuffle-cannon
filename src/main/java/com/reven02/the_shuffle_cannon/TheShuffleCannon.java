@@ -4,7 +4,6 @@ import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.gui.ModGUIs;
 import com.reven02.the_shuffle_cannon.item.ModItems;
 import net.fabricmc.api.ModInitializer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -29,15 +29,19 @@ import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ShuffleCannonItem extends BlockItem {
 
     public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
 
     private Block placingBlock = Blocks.AIR;
+    private static final Random RANDOM = new Random();
+    public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
+
 
     public ShuffleCannonItem() {
-        super(Blocks.AIR, new Item.Settings()
+        super(Blocks.AIR, new Settings()
                 .maxCount(1)
                 .component(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT)
         );
@@ -50,19 +54,48 @@ public class ShuffleCannonItem extends BlockItem {
     }
 
     @Override
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        pickPlacingBlock(context);
+
+        ActionResult actionResult = super.useOnBlock(context);
+
+        // Avoid spending the Shuffle Cannon item when placing blocks
+        context.getStack().setCount(1);
+
+        return actionResult;
+    }
+
+    @Override
     public Block getBlock() {
         return this.placingBlock;
     }
 
-    @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        this.placingBlock = Blocks.ACACIA_STAIRS;
-        ActionResult actionResult = super.useOnBlock(context);
+    private void pickPlacingBlock(ItemUsageContext context) {
+        ShuffleCannonDataComponent data = context.getStack().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
+        if (data == null) {
+            throw CANNON_MISSING_ERROR;
+        }
 
-        // Avoid spending the Shuffle Cannon item when placing blocks
-        context.getStack().decrementUnlessCreative(-1, context.getPlayer());
+        List<Pair<Item, Integer>> content = data.cannonContent().stream()
+                .filter(p -> !p.getFirst().getDefaultStack().isEmpty())  // Skip gaps in the inventory
+                .toList();
 
-        return actionResult;
+        if (content.isEmpty()) {
+            this.placingBlock = Blocks.AIR;
+            return;
+        }
+
+        int totalWeight = content.stream().mapToInt(Pair::getSecond).sum();
+        int randomValue = RANDOM.nextInt(0, totalWeight);
+
+        int cumulativeWeight = 0;
+        for (Pair<Item, Integer> pair : content) {
+            cumulativeWeight += pair.getSecond();
+            if (randomValue < cumulativeWeight) {
+                this.placingBlock = ((BlockItem) pair.getFirst()).getBlock();
+                break;
+            }
+        }
     }
 
     @Override
