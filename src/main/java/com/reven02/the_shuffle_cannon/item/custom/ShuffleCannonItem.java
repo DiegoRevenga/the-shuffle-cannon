@@ -8,36 +8,40 @@ import com.reven02.the_shuffle_cannon.gui.shuffle_cannon.ShuffleCannonGUI;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-public class ShuffleCannonItem extends Item {
+public class ShuffleCannonItem extends BlockItem {
 
     public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
 
+    private Block placingBlock = Blocks.AIR;
+    private static final Random RANDOM = new Random();
+    public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
+
+
     public ShuffleCannonItem() {
-        super(new Item.Settings()
+        super(Blocks.AIR, new Settings()
                 .maxCount(1)
                 .component(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT)
         );
@@ -45,9 +49,88 @@ public class ShuffleCannonItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        //user.openHandledScreen(new SimpleNamedScreenHandlerFactory(this, this.getDisplayName()));
-        user.openHandledScreen(createScreenHandlerFactory(user, hand));
-        return TypedActionResult.success(user.getMainHandStack());
+        if (user.isSneaking()) {
+            user.openHandledScreen(this.createScreenHandlerFactory(user, hand));
+            return TypedActionResult.success(user.getMainHandStack());
+        }
+        return TypedActionResult.pass(user.getMainHandStack());
+    }
+
+    @Override
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        pickPlacingBlock(context);
+
+        ActionResult actionResult = super.useOnBlock(context);
+
+        // Avoid spending the Shuffle Cannon item when placing blocks
+        context.getStack().setCount(1);
+
+        return actionResult;
+    }
+
+    @Override
+    public Block getBlock() {
+        return this.placingBlock;
+    }
+
+    private void pickPlacingBlock(ItemUsageContext context) {
+        ShuffleCannonDataComponent data = context.getStack().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
+        if (data == null) {
+            throw CANNON_MISSING_ERROR;
+        }
+
+        List<Pair<Item, Integer>> content = data.cannonContent().stream()
+                .filter(p -> !p.getFirst().getDefaultStack().isEmpty())  // Skip gaps in the inventory
+                .toList();
+
+        if (content.isEmpty()) {
+            this.placingBlock = Blocks.AIR;
+            return;
+        }
+
+        int totalWeight = content.stream().mapToInt(Pair::getSecond).sum();
+        int randomValue = RANDOM.nextInt(0, totalWeight);
+
+        int cumulativeWeight = 0;
+        for (Pair<Item, Integer> pair : content) {
+            cumulativeWeight += pair.getSecond();
+            if (randomValue < cumulativeWeight) {
+                this.placingBlock = ((BlockItem) pair.getFirst()).getBlock();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        // Debug: Cannon content
+        ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
+        if (data != null) {
+            for (Pair<Item, Integer> pair : data.cannonContent()) {
+                Item item = pair.getFirst();
+                Integer ratio = pair.getSecond();
+
+                tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
+            }
+        }
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return "item.the_shuffle_cannon.shuffle_cannon";
+    }
+
+    @Override
+    public void appendBlocks(Map<Block, Item> map, Item item) {
+        // IMPORTANT! Empty method to avoid linking ShuffleCannonItem to AirBlock
+    }
+
+    @Override
+    public ItemStack getDefaultStack() {
+        ItemStack stack = new ItemStack(this);
+        stack.set(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT);
+
+        return stack;
     }
 
     private NamedScreenHandlerFactory createScreenHandlerFactory(PlayerEntity player, Hand hand) {
@@ -73,61 +156,5 @@ public class ShuffleCannonItem extends Item {
                 return cannonStack;
             }
         };
-    }
-
-    @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        BlockPos clickedPos = context.getBlockPos();
-        BlockPos placingPos = clickedPos.offset(context.getSide());
-
-        World world = context.getWorld();
-
-        Block block = Blocks.AMETHYST_BLOCK;
-
-        // Check entity collisions
-        if (!world.canPlace(block.getDefaultState(), placingPos, ShapeContext.absent())) {
-            return ActionResult.FAIL;
-        }
-
-        // Check is not overriding blocks
-        ItemPlacementContext itemPlacementContext = new ItemPlacementContext(context);
-        if (!itemPlacementContext.canPlace()) {
-            return ActionResult.FAIL;
-        }
-
-        // Place block
-        // Both in client and server to avoid de-sync
-        world.setBlockState(placingPos, block.getDefaultState());
-
-        // ***** Only-Server context *****
-        if (!world.isClient) {
-            world.playSound(null, placingPos, block.getDefaultState().getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS);
-        }
-
-        return ActionResult.SUCCESS;
-    }
-
-    @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-
-        ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
-
-        if (data != null) {
-            for (Pair<Item, Integer> pair : data.cannonContent()) {
-                Item item = pair.getFirst();
-                Integer ratio = pair.getSecond();
-
-                tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
-            }
-        }
-    }
-
-    @Override
-    public ItemStack getDefaultStack() {
-        ItemStack stack = new ItemStack(this);
-        stack.set(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT);
-
-        return stack;
     }
 }

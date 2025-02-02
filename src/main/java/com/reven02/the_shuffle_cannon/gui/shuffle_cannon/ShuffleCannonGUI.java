@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
+import com.reven02.the_shuffle_cannon.item.custom.ShuffleCannonItem;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.networking.NetworkSide;
 import io.github.cottonmc.cotton.gui.networking.ScreenNetworking;
@@ -27,8 +28,7 @@ import static com.reven02.the_shuffle_cannon.gui.ModGUIs.SHUFFLE_CANNON_SCREEN_H
 
 public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
-    static final int SIZE = 9;
-    private static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
+    public static final int SIZE = 9;
 
     private final SimpleInventory wandInventory;
     private final List<WSlider> sliders = new ArrayList<>();
@@ -85,7 +85,7 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
     private void populateInventory() {
         ShuffleCannonDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
-        if (data == null) throw CANNON_MISSING_ERROR;
+        if (data == null) throw ShuffleCannonItem.CANNON_MISSING_ERROR;
 
         for (int i = 0; i < SIZE; i++) {
             Item item = data.cannonContent().get(i).getFirst();
@@ -96,7 +96,7 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
     private int getRatio(int index) {
         final ShuffleCannonDataComponent data = this.owner.get().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
-        if (data == null) throw CANNON_MISSING_ERROR;
+        if (data == null) throw ShuffleCannonItem.CANNON_MISSING_ERROR;
 
         return (data.cannonContent().get(index).getSecond());
     }
