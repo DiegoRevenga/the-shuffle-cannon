@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
+import com.reven02.the_shuffle_cannon.item.ModItems;
 import com.reven02.the_shuffle_cannon.item.custom.ShuffleCannonItem;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.networking.NetworkSide;
@@ -120,8 +121,9 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
             return false;
         }
 
+        boolean isShuffleCannon = stack.isOf(ModItems.SHUFFLE_CANNON);
         boolean isBlock = stack.getItem() instanceof BlockItem;
-        if (!isBlock) {
+        if (isShuffleCannon || !isBlock) {
             return false;
         }
 
