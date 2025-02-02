@@ -1,6 +1,4 @@
 {
   "item.the_shuffle_cannon.shuffle_cannon": "Shuffle Cannon",
-  "item.the_shuffle_cannon.shuffle_cannon.tooltip": "%s: %d",
-
-  "item.the_shuffle_cannon.ender_dust": "Ender dust"
+  "item.the_shuffle_cannon.shuffle_cannon.tooltip": "%s: %d"
 }

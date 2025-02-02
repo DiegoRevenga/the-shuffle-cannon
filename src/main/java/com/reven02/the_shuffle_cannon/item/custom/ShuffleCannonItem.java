@@ -12,12 +12,16 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.StackReference;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -48,11 +52,17 @@ public class ShuffleCannonItem extends BlockItem {
     }
 
     @Override
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        ActionResult actionResult = super.useOnBlock(context);
+        context.getStack().decrementUnlessCreative(-1, context.getPlayer());
+
+        return actionResult;
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-
+        // Debug: Cannon content
         ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
-
         if (data != null) {
             for (Pair<Item, Integer> pair : data.cannonContent()) {
                 Item item = pair.getFirst();
@@ -61,6 +71,11 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
             }
         }
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return "item.the_shuffle_cannon.shuffle_cannon";
     }
 
     @Override

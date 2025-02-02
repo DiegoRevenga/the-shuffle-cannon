@@ -27,7 +27,7 @@ import static com.reven02.the_shuffle_cannon.gui.ModGUIs.SHUFFLE_CANNON_SCREEN_H
 
 public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
-    static final int SIZE = 9;
+    public static final int SIZE = 9;
     private static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
 
     private final SimpleInventory wandInventory;
