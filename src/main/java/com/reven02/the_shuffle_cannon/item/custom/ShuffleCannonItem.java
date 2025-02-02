@@ -49,8 +49,11 @@ public class ShuffleCannonItem extends BlockItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.openHandledScreen(this.createScreenHandlerFactory(user, hand));
-        return TypedActionResult.success(user.getMainHandStack());
+        if (user.isSneaking()) {
+            user.openHandledScreen(this.createScreenHandlerFactory(user, hand));
+            return TypedActionResult.success(user.getMainHandStack());
+        }
+        return TypedActionResult.pass(user.getMainHandStack());
     }
 
     @Override
