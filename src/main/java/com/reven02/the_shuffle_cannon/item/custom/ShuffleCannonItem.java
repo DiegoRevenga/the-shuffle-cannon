@@ -28,10 +28,13 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Map;
 
 public class ShuffleCannonItem extends BlockItem {
 
     public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
+
+    private Block placingBlock = Blocks.AIR;
 
     public ShuffleCannonItem() {
         super(Blocks.AIR, new Item.Settings()
@@ -48,12 +51,15 @@ public class ShuffleCannonItem extends BlockItem {
 
     @Override
     public Block getBlock() {
-        return Blocks.ACACIA_STAIRS;
+        return this.placingBlock;
     }
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
+        this.placingBlock = Blocks.ACACIA_STAIRS;
         ActionResult actionResult = super.useOnBlock(context);
+
+        // Avoid spending the Shuffle Cannon item when placing blocks
         context.getStack().decrementUnlessCreative(-1, context.getPlayer());
 
         return actionResult;
@@ -76,6 +82,11 @@ public class ShuffleCannonItem extends BlockItem {
     @Override
     public String getTranslationKey() {
         return "item.the_shuffle_cannon.shuffle_cannon";
+    }
+
+    @Override
+    public void appendBlocks(Map<Block, Item> map, Item item) {
+        // IMPORTANT! Empty method to avoid linking ShuffleCannonItem to AirBlock
     }
 
     @Override
