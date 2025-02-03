@@ -7,15 +7,13 @@ import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.Shuff
 import com.reven02.the_shuffle_cannon.gui.shuffle_cannon.ShuffleCannonGUI;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.StackReference;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -26,6 +24,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -37,9 +36,7 @@ public class ShuffleCannonItem extends BlockItem {
     public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
     public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
 
-    private Block placingBlock = Blocks.AIR;
     private static final Random RANDOM = new Random();
-    private boolean playerHasEnough = true;
 
     public ShuffleCannonItem() {
         super(Blocks.AIR, new Settings()
@@ -48,6 +45,9 @@ public class ShuffleCannonItem extends BlockItem {
         );
     }
 
+    /**
+     * Opens the Shuffle Cannon GUI if sneaking.
+     */
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (user.isSneaking()) {
@@ -59,14 +59,6 @@ public class ShuffleCannonItem extends BlockItem {
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        pickPlacingBlock(context);
-
-        spendPlayerInventory(context);
-
-        if (!this.playerHasEnough) {
-            return ActionResult.PASS;
-        }
-
         ActionResult actionResult = super.useOnBlock(context);
 
         // Avoid spending the Shuffle Cannon item when placing blocks
@@ -75,7 +67,11 @@ public class ShuffleCannonItem extends BlockItem {
         return actionResult;
     }
 
-    private void pickPlacingBlock(ItemUsageContext context) {
+    /**
+     * Picks a random block from the item content
+     */
+    @Override
+    protected @Nullable BlockState getPlacementState(ItemPlacementContext context) {
         ShuffleCannonDataComponent data = context.getStack().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data == null) {
             throw CANNON_MISSING_ERROR;
@@ -86,45 +82,60 @@ public class ShuffleCannonItem extends BlockItem {
                 .toList();
 
         if (content.isEmpty()) {
-            this.placingBlock = Blocks.AIR;
-            return;
+            return null;
         }
 
         int totalWeight = content.stream().mapToInt(Pair::getSecond).sum();
-        int randomValue = RANDOM.nextInt(0, totalWeight);
+        int randomValue = RANDOM.nextInt(totalWeight);
 
         int cumulativeWeight = 0;
         for (Pair<Item, Integer> pair : content) {
             cumulativeWeight += pair.getSecond();
             if (randomValue < cumulativeWeight) {
-                this.placingBlock = ((BlockItem) pair.getFirst()).getBlock();
-                break;
+                BlockItem blockItem = (BlockItem) pair.getFirst();
+
+                boolean playerHasEnough = this.spendPlayerInventory(context, blockItem);
+                if (!playerHasEnough) {
+                    return null;
+                }
+
+                BlockState blockState = blockItem.getBlock().getPlacementState(context);
+                // Check entity collisions
+                return blockState != null && this.canPlace(context, blockState) ? blockState : null;
             }
         }
+
+        return null;
     }
 
-    private void spendPlayerInventory(ItemUsageContext context) {
+    /**
+     * Spends the picked block from the player's inventory.
+     * @param context
+     * @return Whether the player has the placing block in his inventory. (Always {@code true} in creative)
+     */
+    private boolean spendPlayerInventory(ItemPlacementContext context, Item blockItem) {
         PlayerEntity player = Objects.requireNonNull(context.getPlayer());
 
         if (player.isCreative()) {
-            this.playerHasEnough = true;
-            return;
+            return true;
         }
 
         // Search in main inventory
-        int slotWithStack = player.getInventory().getSlotWithStack(this.placingBlock.asItem().getDefaultStack());
+        int slotWithStack = player.getInventory().getSlotWithStack(blockItem.getDefaultStack());
         // Search in offhand too
-        if (slotWithStack == -1 && player.getInventory().offHand.getFirst().isOf(this.placingBlock.asItem())) {
+        if (slotWithStack == -1 && player.getInventory().offHand.getFirst().isOf(blockItem)) {
             slotWithStack = PlayerInventory.OFF_HAND_SLOT;
         }
 
-        if (slotWithStack != -1) {
-            this.playerHasEnough = true;
+        if (slotWithStack == -1) {
+            return false;
+        }
+
+        // Spend block from inventory only on server
+        if (!context.getWorld().isClient()) {
             player.getInventory().removeStack(slotWithStack, 1);
         }
-        else {
-            this.playerHasEnough = false;
-        }
+        return true;
     }
 
     @Override
@@ -139,11 +150,6 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
             }
         }
-    }
-
-    @Override
-    public Block getBlock() {
-        return this.placingBlock;
     }
 
     @Override
