@@ -29,16 +29,17 @@ import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class ShuffleCannonItem extends BlockItem {
 
     public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
+    public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
 
     private Block placingBlock = Blocks.AIR;
     private static final Random RANDOM = new Random();
-    public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
-
+    private boolean playerHasEnough = true;
 
     public ShuffleCannonItem() {
         super(Blocks.AIR, new Settings()
@@ -60,17 +61,18 @@ public class ShuffleCannonItem extends BlockItem {
     public ActionResult useOnBlock(ItemUsageContext context) {
         pickPlacingBlock(context);
 
+        spendPlayerInventory(context);
+
+        if (!this.playerHasEnough) {
+            return ActionResult.PASS;
+        }
+
         ActionResult actionResult = super.useOnBlock(context);
 
         // Avoid spending the Shuffle Cannon item when placing blocks
         context.getStack().setCount(1);
 
         return actionResult;
-    }
-
-    @Override
-    public Block getBlock() {
-        return this.placingBlock;
     }
 
     private void pickPlacingBlock(ItemUsageContext context) {
@@ -101,6 +103,30 @@ public class ShuffleCannonItem extends BlockItem {
         }
     }
 
+    private void spendPlayerInventory(ItemUsageContext context) {
+        PlayerEntity player = Objects.requireNonNull(context.getPlayer());
+
+        if (player.isCreative()) {
+            this.playerHasEnough = true;
+            return;
+        }
+
+        // Search in main inventory
+        int slotWithStack = player.getInventory().getSlotWithStack(this.placingBlock.asItem().getDefaultStack());
+        // Search in offhand too
+        if (slotWithStack == -1 && player.getInventory().offHand.getFirst().isOf(this.placingBlock.asItem())) {
+            slotWithStack = PlayerInventory.OFF_HAND_SLOT;
+        }
+
+        if (slotWithStack != -1) {
+            this.playerHasEnough = true;
+            player.getInventory().removeStack(slotWithStack, 1);
+        }
+        else {
+            this.playerHasEnough = false;
+        }
+    }
+
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         // Debug: Cannon content
@@ -113,6 +139,11 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
             }
         }
+    }
+
+    @Override
+    public Block getBlock() {
+        return this.placingBlock;
     }
 
     @Override
