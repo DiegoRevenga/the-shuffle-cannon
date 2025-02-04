@@ -18,6 +18,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -72,6 +73,11 @@ public class ShuffleCannonItem extends BlockItem {
      */
     @Override
     protected @Nullable BlockState getPlacementState(ItemPlacementContext context) {
+        // Block only gets placed in server
+        if (context.getWorld().isClient) {
+            return null;
+        }
+
         ShuffleCannonDataComponent data = context.getStack().get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data == null) {
             throw CANNON_MISSING_ERROR;
@@ -92,16 +98,34 @@ public class ShuffleCannonItem extends BlockItem {
         for (Pair<Item, Integer> pair : content) {
             cumulativeWeight += pair.getSecond();
             if (randomValue < cumulativeWeight) {
+                // Block chosen
                 BlockItem blockItem = (BlockItem) pair.getFirst();
 
+                // Spend player's inventory and check if he has enough
                 boolean playerHasEnough = this.spendPlayerInventory(context, blockItem);
                 if (!playerHasEnough) {
                     return null;
                 }
 
                 BlockState blockState = blockItem.getBlock().getPlacementState(context);
+                if (blockState == null) {
+                    return null;
+                }
+
                 // Check entity collisions
-                return blockState != null && this.canPlace(context, blockState) ? blockState : null;
+                blockState = this.canPlace(context, blockState) ? blockState : null;
+
+                // Send block sound to client
+                if (blockState != null && !context.getWorld().isClient) {
+                    Objects.requireNonNull(context.getPlayer()).playSoundToPlayer(
+                            blockState.getSoundGroup().getPlaceSound(),
+                            SoundCategory.BLOCKS,
+                            1.0f,
+                            1.0f
+                    );
+                }
+
+                return blockState;
             }
         }
 
