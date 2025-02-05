@@ -5,14 +5,10 @@ import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
 import com.reven02.the_shuffle_cannon.gui.shuffle_cannon.ShuffleCannonGUI;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.sound.Sound;
-import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -56,9 +52,9 @@ public class ShuffleCannonItem extends BlockItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (user.isSneaking()) {
             user.openHandledScreen(this.createScreenHandlerFactory(user, hand));
-            return TypedActionResult.success(user.getMainHandStack());
+            return TypedActionResult.success(user.getStackInHand(hand));
         }
-        return TypedActionResult.pass(user.getMainHandStack());
+        return TypedActionResult.pass(user.getStackInHand(hand));
     }
 
     @Override
@@ -182,14 +178,26 @@ public class ShuffleCannonItem extends BlockItem {
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        // Debug: Cannon content
         ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data != null) {
-            for (Pair<Item, Integer> pair : data.cannonContent()) {
+            tooltip.add(Text.empty());  // Line break
+
+            List<Pair<Item, Integer>> content = data.cannonContent().stream()
+                    .filter(p -> !p.getFirst().getDefaultStack().isEmpty())  // Skip gaps in the inventory
+                    .toList();
+
+            for (Pair<Item, Integer> pair : content) {
                 Item item = pair.getFirst();
                 Integer ratio = pair.getSecond();
 
-                tooltip.add(Text.translatable("item.the_shuffle_cannon.shuffle_cannon.tooltip", item.getName(), ratio));
+                MutableText tooltipText = Text.empty();
+                tooltipText.append(Text.literal("◆ ").formatted(Formatting.LIGHT_PURPLE));
+                tooltipText.append(MutableText.of(item.getName().getContent()).formatted(Formatting.GRAY));
+                tooltipText.append(" ");
+                tooltipText.append(Text.literal("■".repeat(ratio)).formatted(Formatting.BLUE));
+                tooltipText.append(Text.literal("□".repeat(ShuffleCannonGUI.MAX_RATIO - ratio)).formatted(Formatting.GRAY));
+
+                tooltip.add(tooltipText);
             }
         }
     }

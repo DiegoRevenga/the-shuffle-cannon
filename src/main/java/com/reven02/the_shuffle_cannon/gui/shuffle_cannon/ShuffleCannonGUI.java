@@ -30,6 +30,7 @@ import static com.reven02.the_shuffle_cannon.gui.ModGUIs.SHUFFLE_CANNON_SCREEN_H
 public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
     public static final int SIZE = 9;
+    public static final int MAX_RATIO = 10;
 
     private final SimpleInventory wandInventory;
     private final List<WSlider> sliders = new ArrayList<>();
@@ -53,7 +54,7 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
         // Ratio sliders and displays
         for (int i = 0; i < SIZE; i++) {
-            WSlider slider = new WSlider(1, 10, Axis.VERTICAL);
+            WSlider slider = new WSlider(1, MAX_RATIO, Axis.VERTICAL);
             this.sliders.add(slider);
             slider.setValue(this.getRatio(i));
             slider.setDraggingFinishedListener(sliderListener(i));
