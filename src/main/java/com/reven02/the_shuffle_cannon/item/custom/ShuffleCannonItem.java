@@ -5,10 +5,14 @@ import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
 import com.reven02.the_shuffle_cannon.gui.shuffle_cannon.ShuffleCannonGUI;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.sound.Sound;
+import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,11 +23,10 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,6 +107,21 @@ public class ShuffleCannonItem extends BlockItem {
                 // Spend player's inventory and check if he has enough
                 boolean playerHasEnough = this.spendPlayerInventory(context, blockItem);
                 if (!playerHasEnough) {
+                    PlayerEntity player = Objects.requireNonNull(context.getPlayer());
+
+                    player.sendMessage(
+                            Text.translatable("item.the_shuffle_cannon.shuffle_cannon.not_enough",
+                                    MutableText.of(blockItem.getName().getContent()).formatted(Formatting.LIGHT_PURPLE)),
+                            true
+                    );
+
+                    player.playSoundToPlayer(
+                            SoundEvents.BLOCK_CRAFTER_FAIL,
+                            SoundCategory.BLOCKS,
+                            1.0f,
+                            2f
+                    );
+
                     return null;
                 }
 
@@ -116,7 +134,7 @@ public class ShuffleCannonItem extends BlockItem {
                 blockState = this.canPlace(context, blockState) ? blockState : null;
 
                 // Send block sound to client
-                if (blockState != null && !context.getWorld().isClient) {
+                if (blockState != null) {
                     Objects.requireNonNull(context.getPlayer()).playSoundToPlayer(
                             blockState.getSoundGroup().getPlaceSound(),
                             SoundCategory.BLOCKS,

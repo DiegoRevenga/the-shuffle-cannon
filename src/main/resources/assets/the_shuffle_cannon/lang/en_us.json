@@ -1,4 +1,5 @@
 {
   "item.the_shuffle_cannon.shuffle_cannon": "Shuffle Cannon",
+  "item.the_shuffle_cannon.shuffle_cannon.not_enough": "§6⚠§r You have no more %s left",
   "item.the_shuffle_cannon.shuffle_cannon.tooltip": "%s: %d"
 }
