@@ -19,6 +19,7 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -130,6 +131,15 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
         boolean duplicated = data.cannonContent().stream().anyMatch(pair -> stack.isOf(pair.getFirst()));
         return !duplicated;
+    }
+
+    @Override
+    public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
+        if (this.getSlot(slotIndex).getStack() == this.owner.get()) {
+            return;
+        }
+
+        super.onSlotClick(slotIndex, button, actionType, player);
     }
 
     @Override
