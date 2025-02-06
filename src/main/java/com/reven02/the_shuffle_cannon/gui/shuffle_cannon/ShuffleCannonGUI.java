@@ -10,8 +10,14 @@ import com.reven02.the_shuffle_cannon.item.custom.ShuffleCannonItem;
 import io.github.cottonmc.cotton.gui.ItemSyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.networking.NetworkSide;
 import io.github.cottonmc.cotton.gui.networking.ScreenNetworking;
-import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.*;
+import io.github.cottonmc.cotton.gui.widget.WDynamicLabel;
+import io.github.cottonmc.cotton.gui.widget.WGridPanel;
+import io.github.cottonmc.cotton.gui.widget.WItemSlot;
+import io.github.cottonmc.cotton.gui.widget.WSlider;
+import io.github.cottonmc.cotton.gui.widget.data.Axis;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
@@ -135,7 +141,7 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
 
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
-        if (this.getSlot(slotIndex).getStack() == this.owner.get()) {
+        if (slotIndex >= 0 && slotIndex < this.slots.size() && this.getSlot(slotIndex).getStack() == this.owner.get()) {
             return;
         }
 
