@@ -2,7 +2,7 @@
 
 # The Shuffle Cannon
 
-## Click. Shuffle Build.
+## Click. Shuffle. Build.
 
 <br>
 <p> The Shuffle Cannon introduces a powerful new tool for builders who love variety and randomness!  
@@ -20,7 +20,7 @@ making it easier than ever to create textured builds, natural landscapes, or cha
 ![Block placing gif](assets/block_placing_showcase.gif)
 
 ### Shuffle Cannon GUI
-This menu lets you choose which blocks will the Shuffle Cannon shoot and adjust their frequency.
+`Shift + right click` opens a menu that lets you choose which blocks will the Shuffle Cannon shoot and adjust their frequency.
 ![GUI gif](assets/gui_showcase.gif)
 
 ### Recipe
