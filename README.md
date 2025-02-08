@@ -11,7 +11,8 @@ making it easier than ever to create textured builds, natural landscapes, or cha
 
 ## Downloads
 
-**Coming soon...**
+- [Direct download](https://github.com/DiegoRevenga/the-shuffle-cannon/releases/download/1.0.0%2B1.21/the_shuffle_cannon-1.0.0.jar)
+- [Modrinth](https://modrinth.com/mod/the-shuffle-cannon)
 
 ## Showcase
 
