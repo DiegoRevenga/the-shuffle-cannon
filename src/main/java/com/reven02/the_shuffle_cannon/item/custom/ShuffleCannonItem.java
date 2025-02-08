@@ -180,11 +180,13 @@ public class ShuffleCannonItem extends BlockItem {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data != null) {
-            tooltip.add(Text.empty());  // Line break
-
             List<Pair<Item, Integer>> content = data.cannonContent().stream()
                     .filter(p -> !p.getFirst().getDefaultStack().isEmpty())  // Skip gaps in the inventory
                     .toList();
+
+            if (!content.isEmpty()) {
+                tooltip.add(Text.empty());  // Line break
+            }
 
             for (Pair<Item, Integer> pair : content) {
                 Item item = pair.getFirst();
