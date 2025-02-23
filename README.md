@@ -11,8 +11,9 @@ making it easier than ever to create textured builds, natural landscapes, or cha
 
 ## Downloads
 
-- [Direct download (Minecraft 1.21.4) [Fabric]](https://github.com/DiegoRevenga/the-shuffle-cannon/releases/download/1.0.0%2B1.21.4/the_shuffle_cannon-1.0.0+1.21.4.jar)
 - [Modrinth](https://modrinth.com/mod/the-shuffle-cannon)
+- [Curseforge](https://legacy.curseforge.com/minecraft/mc-mods/the-shuffle-cannon)
+- [Github](https://github.com/DiegoRevenga/the-shuffle-cannon/releases)
 
 ## Showcase
 
