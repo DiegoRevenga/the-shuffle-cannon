@@ -9,6 +9,12 @@
 <p> With the Shuffle Cannon, you can select a set of blocks and place them randomly with a single click, 
 making it easier than ever to create textured builds, natural landscapes, or chaotic designs.
 
+<br>
+<br>
+<a href='https://ko-fi.com/E1E21B1OI8' target='_blank'>
+  <img width="150px" style='border:0px;width:150px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+</a>
+
 ## Downloads
 
 - [Modrinth](https://modrinth.com/mod/the-shuffle-cannon)
