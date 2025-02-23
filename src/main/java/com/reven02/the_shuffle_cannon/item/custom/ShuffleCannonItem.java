@@ -15,6 +15,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,15 +35,20 @@ import java.util.Random;
 
 public class ShuffleCannonItem extends BlockItem {
 
-    public static final Identifier ID = Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon");
+    public static final RegistryKey<Item> SHUFFLE_CANNON_KEY = RegistryKey.of(RegistryKeys.ITEM,
+            Identifier.of(TheShuffleCannon.MOD_ID, "shuffle_cannon")
+    );
+
     public static final RuntimeException CANNON_MISSING_ERROR = new IllegalStateException("Cannon StackReference is missing");
 
     private static final Random RANDOM = new Random();
 
     public ShuffleCannonItem() {
         super(Blocks.AIR, new Settings()
+                .registryKey(SHUFFLE_CANNON_KEY)
                 .maxCount(1)
                 .component(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT)
+                .translationKey("item.the_shuffle_cannon.shuffle_cannon")
         );
     }
 
@@ -49,12 +56,12 @@ public class ShuffleCannonItem extends BlockItem {
      * Opens the Shuffle Cannon GUI if sneaking.
      */
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         if (user.isSneaking()) {
             user.openHandledScreen(this.createScreenHandlerFactory(user, hand));
-            return TypedActionResult.success(user.getStackInHand(hand));
+            return ActionResult.SUCCESS;
         }
-        return TypedActionResult.pass(user.getStackInHand(hand));
+        return ActionResult.PASS;
     }
 
     @Override
@@ -135,7 +142,7 @@ public class ShuffleCannonItem extends BlockItem {
                             blockState.getSoundGroup().getPlaceSound(),
                             SoundCategory.BLOCKS,
                             1.0f,
-                            1.0f
+                            0.80f  // NOTE Calculated in-game to sound as normal as possible :/
                     );
                 }
 
@@ -202,11 +209,6 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(tooltipText);
             }
         }
-    }
-
-    @Override
-    public String getTranslationKey() {
-        return "item.the_shuffle_cannon.shuffle_cannon";
     }
 
     @Override

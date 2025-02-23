@@ -1,6 +1,19 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "the_shuffle_cannon:item/shuffle_cannon"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": ["gui", "fixed"],
+        "model": {
+          "type": "minecraft:model",
+          "model": "the_shuffle_cannon:item/shuffle_cannon"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "the_shuffle_cannon:item/shuffle_cannon_3d"
+    }
   }
 }

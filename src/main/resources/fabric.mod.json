@@ -8,8 +8,8 @@
 		"Reven02"
 	],
 	"contact": {
-		"homepage": "https://github.com/DiegoRevenga/the-shuffle-wand",
-		"sources": "https://github.com/DiegoRevenga/the-shuffle-wand"
+		"homepage": "https://github.com/DiegoRevenga/the-shuffle-cannon",
+		"sources": "https://github.com/DiegoRevenga/the-shuffle-cannon"
 	},
 	"license": "MIT",
 	"icon": "assets/the_shuffle_cannon/icon.png",
@@ -18,19 +18,16 @@
 		"main": [
 			"com.reven02.the_shuffle_cannon.TheShuffleCannon"
 		],
-		"fabric-datagen": [
-			"com.reven02.the_shuffle_cannon.TheShuffleCannonDataGenerator"
-		],
 		"client": [
 			"com.reven02.the_shuffle_cannon.TheShuffleCannonClient"
 		]
 	},
 	"mixins": [
-      "the_shuffle_cannon.mixins.json"
+		"the_shuffle_cannon.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.10",
-		"minecraft": "~1.21",
+		"minecraft": "~1.21.4",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

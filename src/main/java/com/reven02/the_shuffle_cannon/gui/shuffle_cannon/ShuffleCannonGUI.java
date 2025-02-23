@@ -69,7 +69,7 @@ public class ShuffleCannonGUI extends ItemSyncedGuiDescription {
             root.add(slider, i, 2, 1, 2);
 
             WDynamicLabel label = new WDynamicLabel(() -> Integer.toString(slider.getValue()));
-            label.setAlignment(HorizontalAlignment.CENTER);
+            label.setHorizontalAlignment(HorizontalAlignment.CENTER);
             label.setVerticalAlignment(VerticalAlignment.CENTER);
             root.add(label, i, 4);
         }
