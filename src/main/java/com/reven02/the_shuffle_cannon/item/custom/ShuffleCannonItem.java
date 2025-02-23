@@ -155,7 +155,6 @@ public class ShuffleCannonItem extends BlockItem {
 
     /**
      * Spends the picked block from the player's inventory.
-     * @param context
      * @return Whether the player has the placing block in his inventory. (Always {@code true} in creative)
      */
     private boolean spendPlayerInventory(ItemPlacementContext context, Item blockItem) {
