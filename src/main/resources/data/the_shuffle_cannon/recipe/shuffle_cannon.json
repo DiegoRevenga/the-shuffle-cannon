@@ -7,15 +7,9 @@
         "cc "
     ],
     "key": {
-        "c": {
-            "item": "minecraft:copper_ingot"
-        },
-        "d": {
-            "item": "minecraft:dispenser"
-        },
-        "r": {
-            "item": "minecraft:repeater"
-        }
+        "c": "minecraft:copper_ingot",
+        "r": "minecraft:repeater",
+        "d": "minecraft:dispenser"
     },
     "result": {
         "id": "the_shuffle_cannon:shuffle_cannon",
