@@ -18,7 +18,7 @@ making it easier than ever to create textured builds, natural landscapes, or cha
 ## Downloads
 
 - [Modrinth](https://modrinth.com/mod/the-shuffle-cannon)
-- [Curseforge](https://legacy.curseforge.com/minecraft/mc-mods/the-shuffle-cannon)
+- [Curseforge](https://www.curseforge.com/minecraft/mc-mods/the-shuffle-cannon)
 - [Github](https://github.com/DiegoRevenga/the-shuffle-cannon/releases)
 
 ## Showcase
