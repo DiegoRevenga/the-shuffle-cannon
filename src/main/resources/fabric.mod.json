@@ -18,9 +18,6 @@
 		"main": [
 			"com.reven02.the_shuffle_cannon.TheShuffleCannon"
 		],
-		"fabric-datagen": [
-			"com.reven02.the_shuffle_cannon.TheShuffleCannonDataGenerator"
-		],
 		"client": [
 			"com.reven02.the_shuffle_cannon.TheShuffleCannonClient"
 		]

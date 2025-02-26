@@ -39,7 +39,7 @@ public class ShuffleCannonItem extends BlockItem {
     private static final Random RANDOM = new Random();
 
     public ShuffleCannonItem() {
-        super(Blocks.AIR, new Settings()
+        super(Blocks.AIR, new net.minecraft.item.Item.Settings()
                 .maxCount(1)
                 .component(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT, ShuffleCannonDataComponent.DEFAULT)
         );
