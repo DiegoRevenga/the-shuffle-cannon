@@ -1,26 +1,67 @@
 package com.reven02.the_shuffle_cannon;
 
-import com.reven02.the_shuffle_cannon.component.ModComponents;
-import com.reven02.the_shuffle_cannon.gui.ModGUIs;
 import com.reven02.the_shuffle_cannon.item.ModItems;
-import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TheShuffleCannon implements ModInitializer {
-	public static final String MOD_ID = "the_shuffle_cannon";
-	private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+import com.mojang.logging.LogUtils;
 
-	public static void log(String msg) {
-		LOGGER.info("[{}] {}", MOD_ID, msg);
-	}
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-	@Override
-	public void onInitialize() {
-		log("Initializing mod (server)");
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
+@Mod(TheShuffleCannon.MOD_ID)
+public class TheShuffleCannon {
+    public static final String MOD_ID = "the_shuffle_cannon";
+    private static final Logger LOGGER = LogUtils.getLogger();
 
-		ModItems.initialize();
-		ModGUIs.initialize();
-		ModComponents.initialize();
-	}
+    public TheShuffleCannon(IEventBus modEventBus, ModContainer modContainer) {
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+
+        // Register ourselves for server and other game events we are interested in.
+        // Note that this is necessary if and only if we want *this* class (TheShuffleCannon) to respond directly to events.
+        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        NeoForge.EVENT_BUS.register(this);
+
+        ModItems.register(modEventBus);
+
+        // Register the item to a creative tab
+        modEventBus.addListener(this::addCreative);
+
+        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event) {
+
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        ModItems.addCreative(event);
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+
+    }
+
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+
+        }
+    }
 }

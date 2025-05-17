@@ -1,30 +1,25 @@
-![The Shuffle Cannon](assets/banner.png)
 
-# The Shuffle Cannon
+Installation information
+=======
 
-## Click. Shuffle. Build.
+This template repository can be directly cloned to get you started with a new
+mod. Simply create a new repository cloned from this one, by following the
+instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
-<br>
-<p> The Shuffle Cannon introduces a powerful new tool for builders who love variety and randomness!  
-<p> With the Shuffle Cannon, you can select a set of blocks and place them randomly with a single click, 
-making it easier than ever to create textured builds, natural landscapes, or chaotic designs.
+Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
 
-## Downloads
+If at any point you are missing libraries in your IDE, or you've run into problems you can
+run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
+{this does not affect your code} and then start the process again.
 
-- [Direct download (Minecraft 1.21.4) [Fabric]](https://github.com/DiegoRevenga/the-shuffle-cannon/releases/download/1.0.0%2B1.21.4/the_shuffle_cannon-1.0.0+1.21.4.jar)
-- [Modrinth](https://modrinth.com/mod/the-shuffle-cannon)
+Mapping Names:
+============
+By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
+in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
+license. For the latest license text, refer to the mapping file itself, or the reference copy here:
+https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
 
-## Showcase
-
-### Placing random blocks
-![Block placing gif](assets/block_placing_showcase.gif)
-
-### Shuffle Cannon GUI
-`Shift + right click` opens a menu that lets you choose which blocks will the Shuffle Cannon shoot and adjust their frequency.
-![GUI gif](assets/gui_showcase.gif)
-
-### Recipe
-![GUI gif](assets/recipe.png)
-
-### 3D Model
-![GUI gif](assets/3d_model.png)
+Additional Resources: 
+==========
+Community Documentation: https://docs.neoforged.net/  
+NeoForged Discord: https://discord.neoforged.net/

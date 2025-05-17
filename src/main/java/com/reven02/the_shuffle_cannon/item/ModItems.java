@@ -1,27 +1,29 @@
 package com.reven02.the_shuffle_cannon.item;
 
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
-import com.reven02.the_shuffle_cannon.item.custom.ShuffleCannonItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModItems {
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TheShuffleCannon.MOD_ID);
 
-    public static final Item SHUFFLE_CANNON = register(ShuffleCannonItem.SHUFFLE_CANNON_KEY, new ShuffleCannonItem());
+    public static final DeferredItem<Item> SHUFFLE_CANNON = ITEMS.register("shuffle_cannon", () -> new Item(new Item.Properties()
+            .setId(ResourceKey.create(ITEMS.getRegistryKey(), ResourceLocation.fromNamespaceAndPath(TheShuffleCannon.MOD_ID, "shuffle_cannon")))
+    ));
 
-    private static Item register(RegistryKey<Item> key, Item item) {
-        return Registry.register(Registries.ITEM, key.getValue(), item);
+    public static void register(IEventBus eventBus) {
+        ITEMS.register(eventBus);
     }
 
-    public static void initialize() {
-        TheShuffleCannon.log("Registering Mod Items");
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
-            entries.add(SHUFFLE_CANNON);
-        });
+    public static void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(ModItems.SHUFFLE_CANNON);
+        }
     }
 }
