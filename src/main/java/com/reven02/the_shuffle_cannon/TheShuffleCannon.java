@@ -1,5 +1,6 @@
 package com.reven02.the_shuffle_cannon;
 
+import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.item.ModItems;
 import org.slf4j.Logger;
 
@@ -34,6 +35,7 @@ public class TheShuffleCannon {
         NeoForge.EVENT_BUS.register(this);
 
         ModItems.register(modEventBus);
+        ModComponents.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -63,5 +65,9 @@ public class TheShuffleCannon {
         public static void onClientSetup(FMLClientSetupEvent event) {
 
         }
+    }
+
+    public static void log(String msg) {
+        LOGGER.info("[{}] {}", MOD_ID, msg);
     }
 }
