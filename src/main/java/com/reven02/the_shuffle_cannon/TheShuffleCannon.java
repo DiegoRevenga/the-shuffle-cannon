@@ -2,7 +2,6 @@ package com.reven02.the_shuffle_cannon;
 
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.item.ModItems;
-import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
@@ -19,6 +18,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import org.slf4j.Logger;
+
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(TheShuffleCannon.MOD_ID)
 public class TheShuffleCannon {
@@ -26,7 +27,7 @@ public class TheShuffleCannon {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public TheShuffleCannon(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
+        // Register the commonSetup method for mod loading
         modEventBus.addListener(this::commonSetup);
 
         // Register ourselves for server and other game events we are interested in.

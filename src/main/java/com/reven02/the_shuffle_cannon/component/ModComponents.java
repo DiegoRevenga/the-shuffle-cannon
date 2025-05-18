@@ -2,8 +2,10 @@ package com.reven02.the_shuffle_cannon.component;
 
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
+
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

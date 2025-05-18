@@ -1,0 +1,1 @@
+/give @s the_shuffle_cannon:shuffle_cannon[the_shuffle_cannon:shuffle_cannon_data_component={cannon_content:[{item:"minecraft:stone", ratio:3}]}]
