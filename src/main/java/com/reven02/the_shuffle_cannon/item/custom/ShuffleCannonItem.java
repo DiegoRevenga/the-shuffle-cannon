@@ -204,8 +204,6 @@ public class ShuffleCannonItem extends BlockItem implements MenuProvider {
                 tooltip.add(Component.empty()); // Line break
             }
 
-
-
             for (Pair<Item, Integer> pair : content) {
                 Item item = pair.getFirst();
                 Integer ratio = pair.getSecond();

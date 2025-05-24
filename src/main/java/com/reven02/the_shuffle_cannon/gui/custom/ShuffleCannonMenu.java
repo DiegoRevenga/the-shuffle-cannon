@@ -17,6 +17,11 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ShuffleCannonMenu extends AbstractContainerMenu {
+
+    public final int CANNON_INVENTORY_Y = 19;
+    public final int PLAYER_INVENTORY_Y = 102;
+    public final int HOTBAR_Y = 160;
+
     public final ItemStack owner;
     private final Container container = new SimpleContainer(9);
     private final int[] sliderValues = new int[9];
@@ -37,19 +42,31 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
 
         // Add 9 custom slots
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(container, i, 8 + i * 18, 18));
+            this.addSlot(new Slot(
+                    container, i,
+                    8 + i * 18,
+                    CANNON_INVENTORY_Y
+            ));
         }
 
         // Add player inventory
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+                this.addSlot(new Slot(
+                        playerInventory, l + i * 9 + 9,
+                        8 + l * 18,
+                        PLAYER_INVENTORY_Y + i * 18
+                ));
             }
         }
 
         // Add player hotbar
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(
+                    playerInventory, i,
+                    8 + i * 18,
+                    HOTBAR_Y
+            ));
         }
 
         for (int i = 0; i < 9; i++) {

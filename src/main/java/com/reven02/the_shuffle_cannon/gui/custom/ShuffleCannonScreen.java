@@ -12,6 +12,8 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMenu> {
 
+    private final int HEIGHT = 184;
+
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(
             TheShuffleCannon.MOD_ID,
             "textures/gui/shuffle_cannon/shuffle_cannon_gui.png"
@@ -19,6 +21,8 @@ public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMe
 
     public ShuffleCannonScreen(ShuffleCannonMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
+
+        this.imageHeight = HEIGHT;
     }
 
     @Override
