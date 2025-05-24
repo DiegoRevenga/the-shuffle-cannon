@@ -1,6 +1,8 @@
 package com.reven02.the_shuffle_cannon;
 
 import com.reven02.the_shuffle_cannon.component.ModComponents;
+import com.reven02.the_shuffle_cannon.gui.ModMenuTypes;
+import com.reven02.the_shuffle_cannon.gui.custom.ShuffleCannonScreen;
 import com.reven02.the_shuffle_cannon.item.ModItems;
 
 import com.mojang.logging.LogUtils;
@@ -14,6 +16,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -37,6 +40,7 @@ public class TheShuffleCannon {
 
         ModItems.register(modEventBus);
         ModComponents.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -63,8 +67,11 @@ public class TheShuffleCannon {
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(FMLClientSetupEvent event) {}
 
+        @SubscribeEvent
+        private static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(ModMenuTypes.SHUFFLE_CANNON_MENU.get(), ShuffleCannonScreen::new);
         }
     }
 

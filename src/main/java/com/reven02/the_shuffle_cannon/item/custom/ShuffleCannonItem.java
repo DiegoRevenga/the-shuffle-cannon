@@ -3,22 +3,28 @@ package com.reven02.the_shuffle_cannon.item.custom;
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
+import com.reven02.the_shuffle_cannon.gui.custom.ShuffleCannonMenu;
 import com.reven02.the_shuffle_cannon.item.ModItems;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-public class ShuffleCannonItem extends BlockItem {
+public class ShuffleCannonItem extends BlockItem implements MenuProvider {
 
     // TODO Move these constants to their proper classes once created
     public static int INVENTORY_SIZE = 9;
@@ -198,6 +204,8 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(Component.empty()); // Line break
             }
 
+
+
             for (Pair<Item, Integer> pair : content) {
                 Item item = pair.getFirst();
                 Integer ratio = pair.getSecond();
@@ -212,5 +220,29 @@ public class ShuffleCannonItem extends BlockItem {
                 tooltip.add(tooltipText);
             }
         }
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.translatable("item.the_shuffle_cannon.shuffle_cannon");
+    }
+
+    @Override
+    public @NotNull InteractionResult use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+        ItemStack shuffleCannonItem = player.getItemInHand(hand);
+
+        if (player.isCrouching() && !level.isClientSide()) {
+            player.openMenu(this, (RegistryFriendlyByteBuf extraData) -> extraData.writeJsonWithCodec(ItemStack.CODEC, shuffleCannonItem));
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, Player player) {
+        ItemStack shuffleCannonStack = player.getItemInHand(player.getUsedItemHand());
+
+        return new ShuffleCannonMenu(containerId, playerInventory, shuffleCannonStack);
     }
 }
