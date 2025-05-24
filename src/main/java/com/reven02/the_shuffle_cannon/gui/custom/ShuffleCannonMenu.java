@@ -18,13 +18,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShuffleCannonMenu extends AbstractContainerMenu {
 
-    public final int CANNON_INVENTORY_Y = 19;
-    public final int PLAYER_INVENTORY_Y = 102;
-    public final int HOTBAR_Y = 160;
+    public static final int INV_SIZE = 9;
+    public static final int HORIZONTAL_MARGIN = 8;
+    public static final int SLOT_SIZE = 18;
+
+    public static final int CANNON_INVENTORY_Y = 19;
+    public static final int PLAYER_INVENTORY_Y = 102;
+    public static final int HOTBAR_Y = 160;
 
     public final ItemStack owner;
-    private final Container container = new SimpleContainer(9);
-    private final int[] sliderValues = new int[9];
+    private final Container container = new SimpleContainer(INV_SIZE);
+    private final int[] sliderValues = new int[INV_SIZE];
 
     // TODO Save inventory
 
@@ -44,7 +48,7 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; i++) {
             this.addSlot(new Slot(
                     container, i,
-                    8 + i * 18,
+                    HORIZONTAL_MARGIN + i * SLOT_SIZE,
                     CANNON_INVENTORY_Y
             ));
         }
@@ -54,8 +58,8 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
             for (int l = 0; l < 9; ++l) {
                 this.addSlot(new Slot(
                         playerInventory, l + i * 9 + 9,
-                        8 + l * 18,
-                        PLAYER_INVENTORY_Y + i * 18
+                        HORIZONTAL_MARGIN + l * SLOT_SIZE,
+                        PLAYER_INVENTORY_Y + i * SLOT_SIZE
                 ));
             }
         }
@@ -64,12 +68,12 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(
                     playerInventory, i,
-                    8 + i * 18,
+                    HORIZONTAL_MARGIN + i * SLOT_SIZE,
                     HOTBAR_Y
             ));
         }
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < INV_SIZE; i++) {
             this.addDataSlot(DataSlot.shared(sliderValues, i));
         }
     }
@@ -88,7 +92,8 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
-        return null; // FIXME
+        // FIXME
+        return null;
     }
 
     @Override

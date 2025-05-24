@@ -194,6 +194,7 @@ public class ShuffleCannonItem extends BlockItem implements MenuProvider {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
+        // FIXME: Causes exception
         ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data != null) {
             List<Pair<Item, Integer>> content = data.cannonContent().stream()
