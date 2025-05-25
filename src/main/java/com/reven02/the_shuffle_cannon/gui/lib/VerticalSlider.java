@@ -77,27 +77,18 @@ public class VerticalSlider extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.dragging = true;
+    public void onClick(double mouseX, double mouseY, int button) {
+        this.updateValueFromMouse(mouseY);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         this.updateValueFromMouse(mouseY);
         return true;
     }
 
-    @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        // FIXME: Doesn't work
-        if (this.dragging) {
-            this.updateValueFromMouse(mouseY);
-        }
-    }
-
-    @Override
-    public void onRelease(double mouseX, double mouseY) {
-        this.dragging = false;
-    }
-
     private void updateValueFromMouse(double mouseY) {
-        double relativeY = mouseY - this.getY();
+        double relativeY = mouseY - (this.getY() + (double) KNOB_SIZE / 2);
         double ratio = 1.0 - Mth.clamp(relativeY / (double) (HEIGHT - 8), 0.0, 1.0);
         int newValue = (int) Mth.lerp(ratio, minValue, maxValue);
         if (newValue != value) {
