@@ -5,11 +5,14 @@ import com.reven02.the_shuffle_cannon.gui.lib.VerticalSlider;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+
+import java.util.Optional;
 
 public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMenu> {
 
@@ -48,6 +51,16 @@ public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMe
                     }
             ));
         }
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        Optional<GuiEventListener> slider = this.getChildAt(mouseX, mouseY);
+        if (slider.isPresent()) {
+            return slider.get().mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
