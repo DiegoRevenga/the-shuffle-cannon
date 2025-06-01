@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMenu> {
 
+    private static final int INV_LABEL_Y = 91;
+
     private final int HEIGHT = 184;
 
     private int x = 0;
@@ -44,8 +46,7 @@ public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMe
             this.addRenderableWidget(new VerticalSlider(
                     this.x + ShuffleCannonMenu.HORIZONTAL_MARGIN + shift + i * ShuffleCannonMenu.SLOT_SIZE, // x
                     this.y + ShuffleCannonMenu.CANNON_INVENTORY_Y + ShuffleCannonMenu.SLOT_SIZE + 2,        // y
-                    1, 10,  // min, max
-                    1,      // initial value
+                    this.menu.getSliderValue(i), // initial value
                     (int n) -> {
                         // TODO send values to the server
                     }
@@ -76,5 +77,11 @@ public class ShuffleCannonScreen extends AbstractContainerScreen<ShuffleCannonMe
                 imageWidth, imageHeight, // GUI size
                 256, 256 // Texture size (canvas)
         );
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, INV_LABEL_Y, 4210752, false);
     }
 }

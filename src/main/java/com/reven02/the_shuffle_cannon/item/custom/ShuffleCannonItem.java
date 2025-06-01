@@ -4,6 +4,7 @@ import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
 import com.reven02.the_shuffle_cannon.gui.custom.ShuffleCannonMenu;
+import com.reven02.the_shuffle_cannon.gui.lib.VerticalSlider;
 import com.reven02.the_shuffle_cannon.item.ModItems;
 
 import com.mojang.datafixers.util.Pair;
@@ -194,7 +195,6 @@ public class ShuffleCannonItem extends BlockItem implements MenuProvider {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
-        // FIXME: Causes exception
         ShuffleCannonDataComponent data = stack.get(ModComponents.SHUFFLE_CANNON_DATA_COMPONENT);
         if (data != null) {
             List<Pair<Item, Integer>> content = data.cannonContent().stream()
@@ -207,7 +207,7 @@ public class ShuffleCannonItem extends BlockItem implements MenuProvider {
 
             for (Pair<Item, Integer> pair : content) {
                 Item item = pair.getFirst();
-                Integer ratio = pair.getSecond();
+                int ratio = Math.clamp(pair.getSecond(), VerticalSlider.MIN_VALUE, VerticalSlider.MAX_VALUE);
 
                 MutableComponent tooltipText = Component.empty();
                 tooltipText.append(Component.literal("◆ ").withColor(ChatFormatting.LIGHT_PURPLE.getColor()));

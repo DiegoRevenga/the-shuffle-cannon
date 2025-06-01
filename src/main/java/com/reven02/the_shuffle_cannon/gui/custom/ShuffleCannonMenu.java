@@ -3,6 +3,7 @@ package com.reven02.the_shuffle_cannon.gui.custom;
 import com.reven02.the_shuffle_cannon.component.ModComponents;
 import com.reven02.the_shuffle_cannon.component.ShuffleCannonDataComponent.ShuffleCannonDataComponent;
 import com.reven02.the_shuffle_cannon.gui.ModMenuTypes;
+import com.reven02.the_shuffle_cannon.gui.lib.VerticalSlider;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -15,6 +16,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class ShuffleCannonMenu extends AbstractContainerMenu {
 
@@ -84,9 +87,10 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
             return;
         }
 
+        Arrays.fill(this.sliderValues, VerticalSlider.MIN_VALUE);
         for (int i = 0; i < data.cannonContent().size(); i++) {
             this.container.setItem(i, data.cannonContent().get(i).getFirst().getDefaultInstance());
-            this.sliderValues[i] = data.cannonContent().get(i).getSecond();
+            this.sliderValues[i] = Math.clamp(data.cannonContent().get(i).getSecond(), VerticalSlider.MIN_VALUE, VerticalSlider.MAX_VALUE);
         }
     }
 
@@ -99,6 +103,13 @@ public class ShuffleCannonMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player player) {
         return true;
+    }
+
+    public int getSliderValue(int i) {
+        if (i < 0 || i > INV_SIZE) {
+            return -1;
+        }
+        return sliderValues[i];
     }
 }
 

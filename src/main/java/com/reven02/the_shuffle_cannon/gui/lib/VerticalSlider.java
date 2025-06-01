@@ -3,6 +3,8 @@ package com.reven02.the_shuffle_cannon.gui.lib;
 import com.reven02.the_shuffle_cannon.TheShuffleCannon;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -14,6 +16,9 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class VerticalSlider extends AbstractWidget {
+    public static final int MIN_VALUE = 1;
+    public static final int MAX_VALUE = 10;
+
     public static final int WIDTH = 8;
     private static final int HEIGHT = 36;
 
@@ -30,8 +35,6 @@ public class VerticalSlider extends AbstractWidget {
             "textures/gui/lib/vertical_slider_knob.png"
     );
 
-    private final int minValue;
-    private final int maxValue;
     private int value;
 
     private final ValueChangedCallback onValueChanged;
@@ -40,10 +43,8 @@ public class VerticalSlider extends AbstractWidget {
         void onChanged(int newValue);
     }
 
-    public VerticalSlider(int x, int y, int minValue, int maxValue, int initialValue, ValueChangedCallback callback) {
+    public VerticalSlider(int x, int y, int initialValue, ValueChangedCallback callback) {
         super(x, y, WIDTH, HEIGHT, Component.literal(""));
-        this.minValue = minValue;
-        this.maxValue = maxValue;
         this.value = initialValue;
         this.onValueChanged = callback;
     }
@@ -73,6 +74,14 @@ public class VerticalSlider extends AbstractWidget {
                 KNOB_SIZE, KNOB_SIZE,
                 KNOB_SIZE,KNOB_SIZE
         );
+
+        Font font = Minecraft.getInstance().font;
+        String value = Integer.toString(this.value);
+
+        int textX = (this.getX() + this.getWidth() / 2) - font.width(value) / 2;
+        int textY = this.getY() + this.getHeight() + 4;
+
+        guiGraphics.drawString(font, value, textX, textY, 0x3F3F3F, false);
     }
 
     @Override
@@ -89,7 +98,7 @@ public class VerticalSlider extends AbstractWidget {
     private void updateValueFromMouse(double mouseY) {
         double relativeY = mouseY - (this.getY() + (double) KNOB_SIZE / 2);
         double ratio = 1.0 - Mth.clamp(relativeY / (double) (HEIGHT - 8), 0.0, 1.0);
-        int newValue = (int) Mth.lerp(ratio, minValue, maxValue);
+        int newValue = (int) Mth.lerp(ratio, MIN_VALUE, MAX_VALUE);
         if (newValue != value) {
             value = newValue;
             onValueChanged.onChanged(value);
@@ -97,7 +106,7 @@ public class VerticalSlider extends AbstractWidget {
     }
 
     private double getValueRatio() {
-        return (double) (value - minValue) / (double) (maxValue - minValue);
+        return (double) (this.value - MIN_VALUE) / (double) (MAX_VALUE - MIN_VALUE);
     }
 
     @Override
